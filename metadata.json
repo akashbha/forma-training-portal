@@ -1,0 +1,7 @@
+{
+  "name": "forma",
+  "description": "Training Analytics Portal for tracking trainee sessions, scores, error rates, and progress analytics across batches.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

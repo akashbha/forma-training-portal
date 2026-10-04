@@ -1,0 +1,208 @@
+// Prisma Schema for forma - Training Analytics Portal
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TRAINER
+  TRAINEE
+}
+
+enum GoalScope {
+  BATCH
+  TOPIC
+  TRAINEE
+}
+
+enum GoalMetric {
+  SCORE
+  ERRORS
+  TIME
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  IMPORT
+  LOGIN
+  AI_GENERATE
+}
+
+model User {
+  id                 String         @id @default(cuid())
+  name               String
+  email              String         @unique
+  passwordHash       String
+  role               Role           @default(TRAINEE)
+  emailDigestEnabled Boolean        @default(true)
+  theme              String         @default("system")
+  createdAt          DateTime       @default(now())
+  
+  // Relations
+  batchesLed         Batch[]        @relation("TrainerBatches")
+  trainee            Trainee?
+  refreshTokens      RefreshToken[]
+  createdGoals       Goal[]         @relation("CreatedGoals")
+  auditLogs          AuditLog[]     @relation("ActorAuditLogs")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Batch {
+  id        String    @id @default(cuid())
+  name      String
+  program   String
+  startDate DateTime
+  endDate   DateTime
+  trainerId String
+  trainer   User      @relation("TrainerBatches", fields: [trainerId], references: [id], onDelete: Restrict)
+  trainees  Trainee[]
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+
+  @@index([trainerId])
+}
+
+model Trainee {
+  id          String         @id @default(cuid())
+  userId      String         @unique
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  batchId     String
+  batch       Batch          @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  results     Result[]
+  attendances Attendance[]
+  badges      TraineeBadge[]
+  createdAt   DateTime       @default(now())
+
+  @@index([batchId])
+}
+
+model Topic {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+}
+
+model Session {
+  id          String       @id @default(cuid())
+  batchId     String
+  batch       Batch        @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  topicId     String
+  topic       Topic        @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  title       String
+  heldOn      DateTime
+  passMark    Int          @default(70)
+  results     Result[]
+  attendances Attendance[]
+  createdAt   DateTime     @default(now())
+
+  @@index([batchId])
+  @@index([heldOn])
+}
+
+model Result {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  traineeId   String
+  trainee     Trainee  @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  score       Float
+  errors      Int
+  timeSeconds Int
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@unique([sessionId, traineeId])
+  @@index([sessionId])
+  @@index([traineeId])
+}
+
+model Goal {
+  id          String     @id @default(cuid())
+  scope       GoalScope
+  scopeId     String
+  metric      GoalMetric
+  targetValue Float
+  dueDate     DateTime
+  createdBy   String
+  creator     User       @relation("CreatedGoals", fields: [createdBy], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([scope, scopeId])
+  @@index([createdBy])
+}
+
+model Attendance {
+  id        String           @id @default(cuid())
+  sessionId String
+  session   Session          @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  traineeId String
+  trainee   Trainee          @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  status    AttendanceStatus @default(PRESENT)
+  notes     String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([sessionId, traineeId])
+  @@index([sessionId])
+  @@index([traineeId])
+}
+
+model TraineeBadge {
+  id          String   @id @default(cuid())
+  traineeId   String
+  trainee     Trainee  @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  badgeType   String
+  name        String
+  description String
+  awardedAt   DateTime @default(now())
+  metadata    String?  // JSON string for additional context
+
+  @@unique([traineeId, badgeType])
+  @@index([traineeId])
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  actorId   String?
+  actor     User?       @relation("ActorAuditLogs", fields: [actorId], references: [id], onDelete: SetNull)
+  action    AuditAction
+  entity    String
+  entityId  String
+  before    String?     // Sanitized JSON representation
+  after     String?     // Sanitized JSON representation
+  ip        String?
+  createdAt DateTime    @default(now())
+
+  @@index([actorId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}

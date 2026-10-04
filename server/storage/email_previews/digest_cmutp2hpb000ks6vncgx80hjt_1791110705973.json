@@ -1,0 +1,21 @@
+{
+  "trainerId": "cmutp2hpb000ks6vncgx80hjt",
+  "trainerName": "Trainer Two",
+  "trainerEmail": "trainer2.test@forma.internal",
+  "batchNames": [
+    "Batch Beta (Trainer 2)"
+  ],
+  "topImprovers": [],
+  "atRiskTrainees": [],
+  "sessionsPendingResults": [
+    {
+      "sessionId": "cmutp2hpn000zs6vnysvjrw5r",
+      "title": "Session 2: SQL Basics",
+      "batchName": "Batch Beta (Trainer 2)",
+      "heldOn": "2026-09-24"
+    }
+  ],
+  "dashboardUrl": "https://ais-dev-3wdy4dxg6ty2trtfot55cu-582500717777.asia-southeast1.run.app",
+  "generatedAt": "2026-10-04T10:45:05.973Z",
+  "html": "\n      <div style=\"font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1e293b;\">\n        <h2 style=\"color: #4f46e5;\">forma Weekly Trainer Digest</h2>\n        <p>Hello <strong>Trainer Two</strong>,</p>\n        <p>Here is your weekly summary for your assigned cohorts (<strong>Batch Beta (Trainer 2)</strong>).</p>\n        \n        <h3 style=\"color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px;\">🚀 Top Improvers</h3>\n        <p>No significant score deltas recorded this past week.</p>\n\n        <h3 style=\"color: #dc2626; border-bottom: 2px solid #fee2e2; padding-bottom: 4px;\">⚠️ Trainees Requiring Attention</h3>\n        <p style=\"color: #16a34a;\">No trainees currently flagged at risk.</p>\n\n        <h3 style=\"color: #475569; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px;\">📝 Pending Session Grades</h3>\n        <ul><li><strong>Session 2: SQL Basics</strong> (Batch Beta (Trainer 2), held 2026-09-24) - <em>No scores submitted yet</em></li></ul>\n\n        <p style=\"margin-top: 32px;\">\n          <a href=\"https://ais-dev-3wdy4dxg6ty2trtfot55cu-582500717777.asia-southeast1.run.app\" style=\"background-color: #4f46e5; color: #ffffff; padding: 10px 18px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;\">Open Trainer Dashboard</a>\n        </p>\n        <hr style=\"margin-top: 40px; border: 0; border-top: 1px solid #e2e8f0;\" />\n        <p style=\"font-size: 12px; color: #94a3b8;\">You received this because you are an active trainer on forma. You can change your notification settings at any time in your profile.</p>\n      </div>\n    "
+}
